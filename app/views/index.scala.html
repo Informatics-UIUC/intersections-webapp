@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html ng-app='fbEvents'>
+    <head>
+        <meta charset='utf-8'>
+        <title>Intersections - Facebook Events Search</title>
+        <link rel='stylesheet' href='@routes.Assets.at("stylesheets/bootstrap.min.css")'>
+        <link rel='stylesheet' href='@routes.Assets.at("stylesheets/bootstrap-theme.min.css")'>
+        <link rel='stylesheet' media='screen' href='@routes.Assets.at("stylesheets/main.css")'>
+        <link rel='shortcut icon' type='image/png' href='@routes.Assets.at("images/favicon.png")'>
+        <script src='@routes.Assets.at("javascripts/angular.min.js")'></script>
+        <script src='@routes.Assets.at("javascripts/app.js")'></script>
+    </head>
+    <body>
+        <div ng-controller='DBController'>
+            <section>
+                <input ng-model='findKeyword'>
+                <button ng-click='findEventsByKeyword(findKeyword)'>Find</button>
+            </section>
+            <section>
+                <input ng-model='searchKeyword'>
+                <button ng-click='searchEventsByKeyword(searchKeyword)'>Search</button>
+            </section>
+            <p ng-hide="events.length == 0">Found {{ events.length }} events</p>
+            <ul>
+                <li ng-repeat='event in events'>
+                    {{ event.name }} with id {{ event.id }} starts on {{ event.startTime }} and ends on {{ event.endTime }}
+                </li>
+            </ul>
+        </div>
+    </body>
+</html>
