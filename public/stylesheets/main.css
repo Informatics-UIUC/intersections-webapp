@@ -1,1 +1,16 @@
 .nav, .pagination, .carousel, .panel-title a { cursor: pointer; }
+
+body {
+    padding-top: 70px;
+    padding-bottom: 30px;
+}
+
+footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    /* Set the fixed height of the footer here */
+    height: 60px;
+    padding: 10px 10px;
+    background-color: #f5f5f5;
+}

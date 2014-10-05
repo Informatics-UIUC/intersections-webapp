@@ -1,31 +1,77 @@
 <!DOCTYPE html>
-<html ng-app='fbEvents'>
+<html lang="en" ng-app="fbEvents">
     <head>
-        <meta charset='utf-8'>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="Facebook Event Search">
+        <meta name="author" content="Boris Capitanu">
+        <link rel="icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
+
         <title>Intersections - Facebook Events Search</title>
-        <link rel='stylesheet' href='@routes.Assets.at("stylesheets/bootstrap.min.css")'>
-        <link rel='stylesheet' href='@routes.Assets.at("stylesheets/bootstrap-theme.min.css")'>
-        <link rel='stylesheet' media='screen' href='@routes.Assets.at("stylesheets/main.css")'>
-        <link rel='shortcut icon' type='image/png' href='@routes.Assets.at("images/favicon.png")'>
-        <script src='@routes.Assets.at("javascripts/angular.min.js")'></script>
-        <script src='@routes.Assets.at("javascripts/app.js")'></script>
+
+        <link rel="stylesheet" href="@routes.Assets.at("stylesheets/bootstrap.min.css")">
+        <link rel="stylesheet" href="@routes.Assets.at("stylesheets/bootstrap-theme.min.css")">
+        <link rel="stylesheet" href="@routes.Assets.at("stylesheets/ui-grid.min.css")">
+        <link rel="stylesheet" href="@routes.Assets.at("stylesheets/main.css")">
+
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+        <![endif]-->
     </head>
-    <body>
-        <div ng-controller='DBController'>
-            <section>
-                <input ng-model='findKeyword'>
-                <button ng-click='findEventsByKeyword(findKeyword)'>Find</button>
-            </section>
-            <section>
-                <input ng-model='searchKeyword'>
-                <button ng-click='searchEventsByKeyword(searchKeyword)'>Search</button>
-            </section>
-            <p ng-hide="events.length == 0">Found {{ events.length }} events</p>
-            <ul>
-                <li ng-repeat='event in events'>
-                    {{ event.name }} with id {{ event.id }} starts on {{ event.startTime }} and ends on {{ event.endTime }}
-                </li>
-            </ul>
+
+    <body role="document">
+
+        <!-- Fixed navbar -->
+        <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#">Intersections</a>
+                </div>
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                        <li class="active"><a href="#">Home</a></li>
+                    </ul>
+                </div><!--/.nav-collapse -->
+            </div>
         </div>
+
+        <h1>Search Public Facebook Events</h1>
+
+        <tabset>
+            <tab heading="By keyword(s)">
+                <div class="container-fluid">
+                    <form class="form-inline" role="form" ng-submit="submit()">
+                        <div class="form-group">
+                            <label class="sr-only" for="txtQuery">Query</label>
+                            <input type="text" class="form-control" name="q" id="txtQuery" ng-model="query" autofocus="true" autocomplete="true" placeholder="Enter search terms">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Search</button>
+                    </form>
+                </div>
+            </tab>
+            <tab heading="By date range"></tab>
+        </tabset>
+
+        <footer>
+            <span>&copy; 2014 Intersections Project</span>
+            <span class="pull-right text-right">
+                Illinois Informatics Institute<br>
+                University of Illinois at Urbana-Champaign
+            </span>
+        </footer>
+
+        <script src="@routes.Assets.at("javascripts/angular.min.js")"></script>
+        <script src="@routes.Assets.at("javascripts/ui-bootstrap-tpls.min.js")"></script>
+        <script src="@routes.Assets.at("javascripts/ui-grid.min.js")"></script>
+        <script src="@routes.Assets.at("javascripts/app.js")"></script>
     </body>
 </html>

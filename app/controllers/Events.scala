@@ -1,10 +1,13 @@
 package controllers
 
+import play.api.data.Form
+import play.api.data.Forms._
 import play.modules.reactivemongo.MongoController
 import play.modules.reactivemongo.json.collection.JSONCollection
 import play.api.mvc._
 import play.api.libs.json._
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
+
 
 object Events extends Controller with MongoController {
 
@@ -21,9 +24,17 @@ object Events extends Controller with MongoController {
       .map(Ok(_))
   }
 
-  def searchEventsByKeyword(keyword: String) = Action.async {
+  val searchKeywordForm: Form[SearchKeyword] = Form {
+    mapping(
+      "q" -> text
+    )(SearchKeyword.apply)(SearchKeyword.unapply)
+  }
+
+  def searchEventsByKeyword = Action.async { implicit request =>
+    val keyword = searchKeywordForm.bindFromRequest.get
+
     collection
-      .find(Json.obj("$text" -> Json.obj("$search" -> keyword)))
+      .find(Json.obj("$text" -> Json.obj("$search" -> keyword.value)))
       .cursor[JsObject]
       .collect[List]()
       .map(JsArray)
