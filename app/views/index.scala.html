@@ -10,9 +10,9 @@
 
         <title>Intersections - Facebook Events Search</title>
 
-        <link rel="stylesheet" href="@routes.Assets.at("stylesheets/bootstrap.min.css")">
-        <link rel="stylesheet" href="@routes.Assets.at("stylesheets/bootstrap-theme.min.css")">
-        <link rel="stylesheet" href="@routes.Assets.at("stylesheets/ui-grid.min.css")">
+        <link rel="stylesheet" href="@routes.Assets.at("stylesheets/bootstrap.css")">
+        <link rel="stylesheet" href="@routes.Assets.at("stylesheets/bootstrap-theme.css")">
+        <link rel="stylesheet" href="@routes.Assets.at("stylesheets/ui-grid.css")">
         <link rel="stylesheet" href="@routes.Assets.at("stylesheets/main.css")">
 
         <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -44,22 +44,74 @@
             </div>
         </div>
 
-        <h1>Search Public Facebook Events</h1>
+        <div class="container" ng-controller="SearchController">
+            <h1>Search Public Facebook Events</h1>
 
-        <tabset>
-            <tab heading="By keyword(s)">
-                <div class="container-fluid">
-                    <form class="form-inline" role="form" ng-submit="submit()">
+            <tabset class="top20">
+                <tab heading="By query">
+                    <form name="frmQuery" class="form-horizontal well clearfix" role="form" ng-submit="searchByQuery()" novalidate>
                         <div class="form-group">
-                            <label class="sr-only" for="txtQuery">Query</label>
-                            <input type="text" class="form-control" name="q" id="txtQuery" ng-model="query" autofocus="true" autocomplete="true" placeholder="Enter search terms">
+                            <label for="txtQuery" class="col-md-1 control-label">Query:</label>
+                            <div class="col-md-4">
+                                <input type="text" class="form-control" name="q" id="txtQuery" ng-model="model.query" autofocus="true" autocomplete="true" placeholder="Enter query" required>
+                            </div>
                         </div>
-                        <button type="submit" class="btn btn-primary">Search</button>
+
+                        <div class="form-group">
+                            <div class="col-md-offset-1 col-md-4">
+                                <button type="submit" class="btn btn-primary" ng-disabled="frmQuery.$invalid">Search</button>
+                            </div>
+                        </div>
                     </form>
-                </div>
-            </tab>
-            <tab heading="By date range"></tab>
-        </tabset>
+                </tab>
+
+                <tab heading="By date range">
+                    <form class="form-horizontal well clearfix" name="frmTime" role="form" ng-submit="searchByTime()" novalidate>
+                        <div class="form-group" ng-class="{ 'has-error' : frmTime.startDate.$invalid && !frmTime.startDate.$pristine }">
+                            <label for="txtStartDate" class="col-md-1 control-label">From:</label>
+                            <div class="col-md-3">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" name="startDate" id="txtStartDate" placeholder="Select start date" datepicker-popup="MMMM, dd yyyy" ng-model="model.timeQuery.startDate" is-open="model.startDateOpened" datepicker-options="datePickerOptions" close-text="Close" ng-change="checkValidTimeInputs(frmTime.startDate, frmTime.endDate, frmTime)">
+                                    <span class="input-group-btn">
+                                        <button type="button" class="btn btn-default" ng-click="openStartDate($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                                    </span>
+                                </div>
+                                <span ng-show="frmTime.startDate.$error.date" class="help-block">Invalid date!</span>
+                                <span ng-show="frmTime.startDate.$error.startDate" class="help-block">Start date greater than end date!</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group" ng-class="{ 'has-error' : frmTime.endDate.$invalid && !frmTime.endDate.$pristine }">
+                            <label for="txtEndDate" class="col-md-1 control-label">To:</label>
+                            <div class="col-md-3">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" name="endDate" id="txtEndDate" placeholder="Select end date" datepicker-popup="MMMM, dd yyyy" ng-model="model.timeQuery.endDate" is-open="model.endDateOpened" datepicker-options="datePickerOptions" close-text="Close" ng-change="checkValidTimeInputs(frmTime.endDate, frmTime.startDate, frmTime)">
+                                    <span class="input-group-btn">
+                                        <button type="button" class="btn btn-default" ng-click="openEndDate($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                                    </span>
+                                </div>
+                                <span ng-show="frmTime.endDate.$error.date" class="help-block">Invalid date!</span>
+                                <span ng-show="frmTime.endDate.$error.endDate" class="help-block">End date smaller than start date!</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-md-offset-1 col-md-3">
+                                <button type="submit" class="btn btn-primary" ng-disabled="frmTime.$invalid || frmTime.$pristine">Search</button>
+                            </div>
+                        </div>
+                    </form>
+                </tab>
+            </tabset>
+
+            <h1 class="page-header">Results</h1>
+            <alert ng-show="model.status != null" type="danger">{{ model.status }}</alert>
+
+            <section>
+                <p>Found {{ model.events.length }} events</p>
+                <div id="grid1" ui-grid="gridOptions" class="grid"></div>
+            </section>
+        </div>
 
         <footer>
             <span>&copy; 2014 Intersections Project</span>
@@ -69,9 +121,9 @@
             </span>
         </footer>
 
-        <script src="@routes.Assets.at("javascripts/angular.min.js")"></script>
-        <script src="@routes.Assets.at("javascripts/ui-bootstrap-tpls.min.js")"></script>
-        <script src="@routes.Assets.at("javascripts/ui-grid.min.js")"></script>
+        <script src="@routes.Assets.at("javascripts/angular.js")"></script>
+        <script src="@routes.Assets.at("javascripts/ui-bootstrap-tpls.js")"></script>
+        <script src="@routes.Assets.at("javascripts/ui-grid.js")"></script>
         <script src="@routes.Assets.at("javascripts/app.js")"></script>
     </body>
 </html>

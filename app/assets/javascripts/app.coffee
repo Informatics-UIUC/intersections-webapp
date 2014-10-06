@@ -1,36 +1,98 @@
-app = angular.module 'fbEvents', ['ui.bootstrap']
+app = angular.module 'fbEvents', ['ui.bootstrap', 'ui.grid']
 
-app.service 'dataService', ['$http', ($http) ->
-  @searchEventsByKeyword = (query) ->
-    $http.get("search?q=#{query}").then (data) ->
-      data.map (e) ->
-        e.id = e._id
-        e.startTime = new Date(e.start_time.$date).toLocaleString()
-        if e.end_time? then e.endTime = new Date(e.end_time.$date).toLocaleString()
-        e
+app.service 'DataService', ['$http', ($http) ->
+
+  @searchByQuery = (query) ->
+    $http.get("searchByQuery?q=#{query}")
+      .then (response) ->
+        response.data = response.data.map (e) ->
+          id:           e._id
+          name:         e.name ? null
+          description:  e.description ? null
+          startTime:    new Date(e.start_time.$date).toLocaleString()
+          endTime:      if e.end_time? then new Date(e.end_time.$date).toLocaleString() else null
+          location:     e.location ? null
+          ownerName:    e.owner.name ? null
+        response
+
+  @searchByTime = (timeQuery) ->
+    query = []
+    if timeQuery.startDate? then query.push "start=#{timeQuery.startDate.toISOString()}"
+    if timeQuery.endDate? then query.push "end=#{timeQuery.endDate.toISOString()}"
+    query = query.join("&")
+
+    $http.get("searchByTime?#{query}")
+      .then (response) ->
+        response.data = response.data.map (e) ->
+          id:           e._id
+          name:         e.name ? null
+          description:  e.description ? null
+          startTime:    new Date(e.start_time.$date).toLocaleString()
+          endTime:      if e.end_time? then new Date(e.end_time.$date).toLocaleString() else null
+          location:     e.location ? null
+          ownerName:    e.owner.name ? null
+        response
+
+  return
 ]
 
-app.controller 'DBController', ['$scope', '$http', ($scope, $http) ->
-  $scope.events = []
+app.controller 'SearchController', ['$scope', 'DataService', '$log', ($scope, dataService, $log) ->
+  $scope.model =
+    query: null
+    timeQuery:
+      startDate: null
+      endDate: null
+    events: []
 
-  $scope.findEventsByKeyword = (keyword) ->
-    $http.get("find?query=#{keyword}").success (data) ->
-      # console.log data
-      $scope.events = data.map (e) ->
-        id: e._id
-        name: e.name
-        description: e.description if e.description?
-        startTime: new Date(e.start_time.$date).toLocaleString()
-        endTime: new Date(e.end_time.$date).toLocaleString() if e.end_time?
-      # console.log $scope.events
-      # console.log "-------------"
+  $scope.datePickerOptions =
+    showWeeks: false
 
-  $scope.searchEventsByKeyword = (keyword) ->
-    $http.get("search?query=#{keyword}").success (data) ->
-      # console.log data
-      $scope.events = data.map (e) ->
-        e.id = e._id
-        e.startTime = new Date(e.start_time.$date).toLocaleString()
-        if e.end_time? then e.endTime = new Date(e.end_time.$date).toLocaleString()
-        e
+  $scope.gridOptions =
+    enableSorting: true
+    data: $scope.model.events
+
+  $scope.openStartDate = ($event) ->
+    $event.preventDefault()
+    $event.stopPropagation()
+    $scope.model.startDateOpened = true
+
+  $scope.openEndDate = ($event) ->
+    $event.preventDefault()
+    $event.stopPropagation()
+    $scope.model.endDateOpened = true
+
+  $scope.searchByQuery = () ->
+    dataService.searchByQuery($scope.model.query).then(
+      (response) ->
+          $scope.model.status = null
+          $scope.model.events = response.data
+          $scope.gridOptions.data = response.data
+      (error) ->
+        $log.error "Got error: #{error.statusText}"
+        $scope.model.status = "Error searching by query! Reason: #{error.statusText}"
+    )
+
+  $scope.searchByTime = () ->
+    dataService.searchByTime($scope.model.timeQuery).then(
+      (response) ->
+        $scope.model.status = null
+        $scope.model.events = response.data
+        $scope.gridOptions.data = response.data
+      (error) ->
+        $log.error "Got error: #{error.statusText}"
+        $scope.model.status = "Error searching by time query! Reason: #{error.statusText}"
+    )
+
+  $scope.checkValidTimeInputs = (elm1, elm2) ->
+    start = $scope.model.timeQuery.startDate
+    end = $scope.model.timeQuery.endDate
+
+    if not start? or not end?
+      elm1.$setValidity elm1.$name, true
+      elm2.$setValidity elm2.$name, true
+    else
+      elm1.$setValidity elm1.$name, end > start
+      if elm2.$invalid then elm2.$setValidity elm2.$name, end > start
+
+  return
 ]
