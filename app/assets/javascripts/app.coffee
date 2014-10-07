@@ -1,4 +1,4 @@
-app = angular.module 'fbEvents', ['ui.bootstrap', 'ui.grid']
+app = angular.module 'fbEvents', ['ui.bootstrap', 'ui.grid', 'ngTable']
 
 app.service 'DataService', ['$http', ($http) ->
 
@@ -36,7 +36,7 @@ app.service 'DataService', ['$http', ($http) ->
   return
 ]
 
-app.controller 'SearchController', ['$scope', 'DataService', '$log', ($scope, dataService, $log) ->
+app.controller 'SearchController', ['$scope', 'DataService', '$log', 'ngTableParams', ($scope, dataService, $log, ngTableParams) ->
   $scope.model =
     query: null
     timeQuery:
@@ -93,6 +93,20 @@ app.controller 'SearchController', ['$scope', 'DataService', '$log', ($scope, da
     else
       elm1.$setValidity elm1.$name, end > start
       if elm2.$invalid then elm2.$setValidity elm2.$name, end > start
+
+  $scope.$watch "model.events", () ->
+    $scope.tableParams.page 1
+    $scope.tableParams.total = () -> $scope.model.events.length
+    $scope.tableParams.reload()
+
+  $scope.tableParams = new ngTableParams(
+    page: 1            # show first page
+    count: 10          # count per page
+  ,
+    total: 0
+    getData: ($defer, params) ->
+      $defer.resolve $scope.model.events.slice((params.page() - 1) * params.count(), params.page() * params.count())
+  )
 
   return
 ]
