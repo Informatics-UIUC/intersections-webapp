@@ -13,7 +13,7 @@ import reactivemongo.bson.BSONDateTime
 
 object Events extends Controller with MongoController {
 
-  def collection: JSONCollection = db collection "testimport"
+  def collection: JSONCollection = db collection "fb_events"
 
   import models._
 

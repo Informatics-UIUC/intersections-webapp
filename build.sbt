@@ -1,6 +1,16 @@
+import com.typesafe.sbt.SbtNativePackager._
+import NativePackagerKeys._
+import play.PlayScala
+
 name := """webapp"""
 
 version := "1.0-SNAPSHOT"
+
+maintainer in Linux := "Boris Capitanu <capitanu@illinois.edu>"
+
+packageSummary in Linux := "Intersections - FB Events"
+
+packageDescription := "This is the FB events search webapp for the Intersections project"
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
 

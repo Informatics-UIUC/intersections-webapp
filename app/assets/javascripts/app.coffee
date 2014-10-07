@@ -12,7 +12,11 @@ app.service 'DataService', ['$http', ($http) ->
           startTime:    new Date(e.start_time.$date).toLocaleString()
           endTime:      if e.end_time? then new Date(e.end_time.$date).toLocaleString() else null
           location:     e.location ? null
-          ownerName:    e.owner.name ? null
+          locationId:   if e.venue? then e.venue._id ? null else null
+          locationLat:  if e.venue? then e.venue.latitude ? null else null
+          locationLon:  if e.venue? then e.venue.longitude ? null else null
+          ownerName:    if e.owner? then e.owner.name ? null else null
+          ownerId:      if e.owner? then e.owner._id ? null else null
         response
 
   @searchByTime = (timeQuery) ->
@@ -30,7 +34,11 @@ app.service 'DataService', ['$http', ($http) ->
           startTime:    new Date(e.start_time.$date).toLocaleString()
           endTime:      if e.end_time? then new Date(e.end_time.$date).toLocaleString() else null
           location:     e.location ? null
-          ownerName:    e.owner.name ? null
+          locationId:   if e.venue? then e.venue._id ? null else null
+          locationLat:  if e.venue? then e.venue.latitude ? null else null
+          locationLon:  if e.venue? then e.venue.longitude ? null else null
+          ownerName:    if e.owner? then e.owner.name ? null else null
+          ownerId:      if e.owner? then e.owner._id ? null else null
         response
 
   return
