@@ -12,8 +12,8 @@
 
         <link rel="stylesheet" href="@routes.Assets.at("stylesheets/bootstrap.css")">
         <link rel="stylesheet" href="@routes.Assets.at("stylesheets/bootstrap-theme.css")">
-        <link rel="stylesheet" href="@routes.Assets.at("stylesheets/ui-grid.css")">
         <link rel="stylesheet" href="@routes.Assets.at("stylesheets/ng-table.css")">
+        <link rel="stylesheet" href="@routes.Assets.at("stylesheets/angular-busy.css")">
         <link rel="stylesheet" href="@routes.Assets.at("stylesheets/main.css")">
 
         <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -24,8 +24,9 @@
 
         <script src="@routes.Assets.at("javascripts/angular.js")"></script>
         <script src="@routes.Assets.at("javascripts/ui-bootstrap-tpls.js")"></script>
-        <script src="@routes.Assets.at("javascripts/ui-grid.js")"></script>
         <script src="@routes.Assets.at("javascripts/ng-table.js")"></script>
+        <script src="@routes.Assets.at("javascripts/angular-animate.js")"></script>
+        <script src="@routes.Assets.at("javascripts/angular-busy.js")"></script>
     </head>
 
     <body role="document">
@@ -53,102 +54,98 @@
         <div class="container" ng-controller="SearchController">
             <h1>Search Public Facebook Events</h1>
 
-            <tabset class="top20">
-                <tab heading="By query">
-                    <form name="frmQuery" class="form-horizontal well clearfix" role="form" ng-submit="searchByQuery()" novalidate>
-                        <div class="form-group">
-                            <label for="txtQuery" class="col-md-1 control-label">Query:</label>
-                            <div class="col-md-4">
-                                <input type="text" class="form-control" name="q" id="txtQuery" ng-model="model.query" autofocus="true" autocomplete="true" placeholder="Enter query" required>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <div class="col-md-offset-1 col-md-4">
-                                <button type="submit" class="btn btn-primary" ng-disabled="frmQuery.$invalid">Search</button>
-                            </div>
-                        </div>
-                    </form>
-                </tab>
-
-                <tab heading="By date range">
-                    <form class="form-horizontal well clearfix" name="frmTime" role="form" ng-submit="searchByTime()" novalidate>
-                        <div class="form-group" ng-class="{ 'has-error' : frmTime.startDate.$invalid && !frmTime.startDate.$pristine }">
-                            <label for="txtStartDate" class="col-md-1 control-label">From:</label>
-                            <div class="col-md-3">
-                                <div class="input-group">
-                                    <input type="text" class="form-control" name="startDate" id="txtStartDate" placeholder="Select start date" datepicker-popup="MMMM, dd yyyy" ng-model="model.timeQuery.startDate" is-open="model.startDateOpened" datepicker-options="datePickerOptions" close-text="Close" ng-change="checkValidTimeInputs(frmTime.startDate, frmTime.endDate, frmTime)">
-                                    <span class="input-group-btn">
-                                        <button type="button" class="btn btn-default" ng-click="openStartDate($event)"><i class="glyphicon glyphicon-calendar"></i></button>
-                                    </span>
+            <div class="row">
+                <form name="frmEventQuery" class="form-horizontal well clearfix top20" role="form" ng-submit="searchEvents()" novalidate>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="txtQuery" class="control-label col-md-2">Query:</label>
+                                <div class="col-md-10">
+                                    <input type="text" class="form-control" name="q" id="txtQuery" ng-model="model.eventQuery.keyword" autofocus="true" autocomplete="true" placeholder="Enter query">
                                 </div>
-                                <span ng-show="frmTime.startDate.$error.date" class="help-block">Invalid date!</span>
-                                <span ng-show="frmTime.startDate.$error.startDate" class="help-block">Start date greater than end date!</span>
                             </div>
                         </div>
 
-                        <div class="form-group" ng-class="{ 'has-error' : frmTime.endDate.$invalid && !frmTime.endDate.$pristine }">
-                            <label for="txtEndDate" class="col-md-1 control-label">To:</label>
-                            <div class="col-md-3">
-                                <div class="input-group">
-                                    <input type="text" class="form-control" name="endDate" id="txtEndDate" placeholder="Select end date" datepicker-popup="MMMM, dd yyyy" ng-model="model.timeQuery.endDate" is-open="model.endDateOpened" datepicker-options="datePickerOptions" close-text="Close" ng-change="checkValidTimeInputs(frmTime.endDate, frmTime.startDate, frmTime)">
-                                    <span class="input-group-btn">
-                                        <button type="button" class="btn btn-default" ng-click="openEndDate($event)"><i class="glyphicon glyphicon-calendar"></i></button>
-                                    </span>
+                        <div class="col-md-4">
+                            <div class="form-group" ng-class="{ 'has-error' : frmEventQuery.startDate.$invalid && !frmEventQuery.startDate.$pristine }">
+                                <label for="txtStartDate" class="control-label col-md-2">From:</label>
+                                <div class="col-md-10">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" name="startDate" id="txtStartDate" placeholder="Select start date" datepicker-popup="MMMM, dd yyyy" ng-model="model.eventQuery.startDate" is-open="model.startDateOpened" datepicker-options="datePickerOptions" close-text="Close" ng-change="checkValidTimeInputs(frmEventQuery.startDate, frmEventQuery.endDate, frmEventQuery)">
+                                        <span class="input-group-btn">
+                                            <button type="button" class="btn btn-default" ng-click="openStartDate($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                                        </span>
+                                    </div>
+                                    <span ng-show="frmEventQuery.startDate.$error.date" class="help-block">Invalid date!</span>
+                                    <span ng-show="frmEventQuery.startDate.$error.startDate" class="help-block">Start date greater than end date!</span>
                                 </div>
-                                <span ng-show="frmTime.endDate.$error.date" class="help-block">Invalid date!</span>
-                                <span ng-show="frmTime.endDate.$error.endDate" class="help-block">End date smaller than start date!</span>
                             </div>
-                        </div>
 
-                        <div class="form-group">
-                            <div class="col-md-offset-1 col-md-3">
-                                <button type="submit" class="btn btn-primary" ng-disabled="frmTime.$invalid || frmTime.$pristine">Search</button>
+                            <div class="form-group" ng-class="{ 'has-error' : frmEventQuery.endDate.$invalid && !frmEventQuery.endDate.$pristine }">
+                                <label for="txtEndDate" class="control-label col-md-2">To:</label>
+                                <div class="col-md-10">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" name="endDate" id="txtEndDate" placeholder="Select end date" datepicker-popup="MMMM, dd yyyy" ng-model="model.eventQuery.endDate" is-open="model.endDateOpened" datepicker-options="datePickerOptions" close-text="Close" ng-change="checkValidTimeInputs(frmEventQuery.endDate, frmEventQuery.startDate, frmEventQuery)">
+                                        <span class="input-group-btn">
+                                            <button type="button" class="btn btn-default" ng-click="openEndDate($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                                        </span>
+                                    </div>
+                                    <span ng-show="frmEventQuery.endDate.$error.date" class="help-block">Invalid date!</span>
+                                    <span ng-show="frmEventQuery.endDate.$error.endDate" class="help-block">End date smaller than start date!</span>
+                                </div>
                             </div>
-                        </div>
-                    </form>
-                </tab>
-            </tabset>
-
-            <section ng-show="model.events || model.status != null">
-                <div class="panel panel-info">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">{{ model.events.length | number }} Results</h3>
-                    </div>
-                    <div class="panel-body">
-                        <alert ng-show="model.status != null" type="danger">{{ model.status }}</alert>
-
-                        @*<div id="grid1" ui-grid="gridOptions" class="grid"></div>*@
-
-                        <div class="table-responsive">
-                            <table class="table table-condensed table-striped" ng-table="tableParams">
-                                <tr ng-repeat="event in $data">
-                                    <td data-title="'Name'">
-                                        <a href="https://www.facebook.com/{{ event.id }}" target="_blank">{{ event.name }}</a>
-                                    </td>
-                                    <td data-title="'Description'">{{ event.description }}</td>
-                                    <td data-title="'Start Time'">{{ event.startTime }}</td>
-                                    <td data-title="'End Time'">{{ event.endTime }}</td>
-                                    <td data-title="'Location'">
-                                        <div ng-if="event.locationLat != null && event.locationLon != null">
-                                            <a href="http://maps.google.com/?q={{ event.locationLat }},{{ event.locationLon }}" target="_blank">{{ event.location }}</a>
-                                        </div>
-                                        <div ng-if="event.locationId != null && event.locationLat == null">
-                                            <a href="https://www.facebook.com/{{ event.locationId }}" target="_blank">{{ event.location }}</a>
-                                        </div>
-                                        <div ng-if="event.locationId == null && event.locationLat == null">
-                                            {{ event.location }}
-                                        </div>
-                                    </td>
-                                    <td data-title="'Owner'">
-                                        <a href="https://www.facebook.com/{{ event.ownerId }}" target="_blank">{{ event.ownerName }}</a>
-                                    </td>
-                                </tr>
-                            </table>
                         </div>
                     </div>
-                </div>
-            </section>
+
+                    <div class="row">
+                        <div class="col-xs-2 col-xs-offset-1">
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-primary btn-md btn-block" ng-disabled="frmEventQuery.$invalid || frmEventQuery.$pristine">Search</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="row" cg-busy="searchPromise">
+                <section ng-show="model.events || model.status != null">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">{{ model.events.length | number }} Results</h3>
+                        </div>
+                        <div class="panel-body">
+                            <alert ng-show="model.status != null" type="danger">{{ model.status }}</alert>
+
+                            <div class="table-responsive">
+                                <table class="table table-condensed table-striped" ng-table="tableParams">
+                                    <tr ng-repeat="event in $data">
+                                        <td data-title="'Name'" sortable="'name'">
+                                            <a href="https://www.facebook.com/{{ event.id }}" target="_blank">{{ event.name }}</a>
+                                        </td>
+                                        <td data-title="'Description'">{{ event.description }}</td>
+                                        <td data-title="'Start Time'" sortable="'startTime'">{{ event.startTime.toLocaleString() }}</td>
+                                        <td data-title="'End Time'" sortable="'endTime'">{{ event.endTime.toLocaleString() }}</td>
+                                        <td data-title="'Location'">
+                                            <div ng-if="event.locationLat != null && event.locationLon != null">
+                                                <a href="http://maps.google.com/?q={{ event.locationLat }},{{ event.locationLon }}" target="_blank">{{ event.location }}</a>
+                                            </div>
+                                            <div ng-if="event.locationId != null && event.locationLat == null">
+                                                <a href="https://www.facebook.com/{{ event.locationId }}" target="_blank">{{ event.location }}</a>
+                                            </div>
+                                            <div ng-if="event.locationId == null && event.locationLat == null">
+                                                {{ event.location }}
+                                            </div>
+                                        </td>
+                                        <td data-title="'Owner'" sortable="'ownerName'">
+                                            <a href="https://www.facebook.com/{{ event.ownerId }}" target="_blank">{{ event.ownerName }}</a>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
         </div>
 
         <footer>

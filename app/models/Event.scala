@@ -2,7 +2,7 @@ package models
 
 import org.joda.time.DateTime
 
-//TODO: Only needed for the findEventsByKeyword
+// NOTE: Only needed for the findEventsByKeyword
 
 case class Event(id: Long,
                  name: String,
@@ -33,3 +33,15 @@ object Event {
 
   implicit val eventFormat = Format(eventReads, eventWrites)
 }
+
+
+// This is how to use the above:
+//
+//def findEventsByKeyword(keyword: String) = Action.async {
+//collection
+//.find(Json.obj("$text" -> Json.obj("$search" -> keyword)))
+//.cursor[Event]
+//.collect[List]()
+//.map(Json.toJson(_))
+//.map(Ok(_))
+//}
