@@ -4,7 +4,7 @@ import play.PlayScala
 
 name := """webapp"""
 
-version := "2.1-SNAPSHOT"
+version := "2.2-SNAPSHOT"
 
 maintainer in Linux := "Boris Capitanu <capitanu@illinois.edu>"
 

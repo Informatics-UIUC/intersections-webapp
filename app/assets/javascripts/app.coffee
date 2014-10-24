@@ -39,6 +39,7 @@ app.controller 'SearchController', ['$scope', 'DataService', '$log', '$filter', 
       startDate: null
       endDate: null
     events: []
+    hasSearched: false
 
   $scope.searchPromise = null
 
@@ -61,6 +62,7 @@ app.controller 'SearchController', ['$scope', 'DataService', '$log', '$filter', 
       (response) ->
         $scope.model.status = null
         $scope.model.events = response.data
+        $scope.model.hasSearched = true
       (error) ->
         $log.error "Got error: #{error.statusText}"
         $scope.model.status = "Error performing event query! Reason: #{error.statusText}"

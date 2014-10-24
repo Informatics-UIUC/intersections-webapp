@@ -108,14 +108,14 @@
             </div>
 
             <div class="row" cg-busy="searchPromise">
-                <section ng-show="model.events || model.status != null">
+                <alert ng-show="model.status != null" type="danger">{{ model.status }}</alert>
+
+                <section ng-show="model.hasSearched">
                     <div class="panel panel-info">
                         <div class="panel-heading">
                             <h3 class="panel-title">{{ model.events.length | number }} Results</h3>
                         </div>
-                        <div class="panel-body">
-                            <alert ng-show="model.status != null" type="danger">{{ model.status }}</alert>
-
+                        <div class="panel-body" ng-show="model.events">
                             <div class="table-responsive">
                                 <table class="table table-condensed table-striped" ng-table="tableParams">
                                     <tr ng-repeat="event in $data">
